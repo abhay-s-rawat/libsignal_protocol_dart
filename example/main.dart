@@ -56,7 +56,7 @@ Future<void> install() async {
   // ignore: avoid_print
   print(ciphertext);
   // ignore: avoid_print
-  print(ciphertext.serialize());
+  print(ciphertext?.serialize());
   //deliver(ciphertext);
 
   final signalProtocolStore =
@@ -71,7 +71,7 @@ Future<void> install() async {
   await signalProtocolStore.storeSignedPreKey(
       remoteSignedPreKey.id, remoteSignedPreKey);
 
-  if (ciphertext.getType() == CiphertextMessage.prekeyType) {
+  if (ciphertext?.getType() == CiphertextMessage.prekeyType) {
     await remoteSessionCipher
         .decryptWithCallback(ciphertext as PreKeySignalMessage, (plaintext) {
       // ignore: avoid_print

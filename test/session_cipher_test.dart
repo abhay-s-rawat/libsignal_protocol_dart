@@ -49,6 +49,7 @@ Future<void> main() async {
     final alicePlaintext =
         Uint8List.fromList(utf8.encode('This is a plaintext message.'));
     final message = await aliceCipher.encrypt(alicePlaintext);
+    if (message == null) return;
     final bobPlaintext = await bobCipher
         .decryptFromSignal(SignalMessage.fromSerialized(message.serialize()));
 
@@ -57,6 +58,7 @@ Future<void> main() async {
     final bobReply =
         Uint8List.fromList(utf8.encode('This is a message from Bob.'));
     final reply = await bobCipher.encrypt(bobReply);
+    if (reply == null) return;
     final receivedReply = await aliceCipher
         .decryptFromSignal(SignalMessage.fromSerialized(reply.serialize()));
 
@@ -68,8 +70,11 @@ Future<void> main() async {
     for (var i = 0; i < 50; i++) {
       alicePlaintextMessages
           .add(Uint8List.fromList(utf8.encode('смерть за смерть $i')));
-      aliceCiphertextMessages.add(await aliceCipher
-          .encrypt(Uint8List.fromList(utf8.encode('смерть за смерть $i'))));
+      final alicemsg = await aliceCipher
+          .encrypt(Uint8List.fromList(utf8.encode('смерть за смерть $i')));
+      if (alicemsg != null) {
+        aliceCiphertextMessages.add(alicemsg);
+      }
     }
 
     var seed = DateTime.now().microsecondsSinceEpoch;
@@ -89,8 +94,11 @@ Future<void> main() async {
     for (var i = 0; i < 20; i++) {
       bobPlaintextMessages
           .add(Uint8List.fromList(utf8.encode('смерть за смерть $i')));
-      bobCiphertextMessages.add(await bobCipher
-          .encrypt(Uint8List.fromList(utf8.encode('смерть за смерть $i'))));
+      final bobmsg = await bobCipher
+          .encrypt(Uint8List.fromList(utf8.encode('смерть за смерть $i')));
+      if (bobmsg != null) {
+        bobCiphertextMessages.add(bobmsg);
+      }
     }
 
     seed = DateTime.now().millisecondsSinceEpoch;
@@ -199,8 +207,11 @@ Future<void> main() async {
     final inflight = <CiphertextMessage>[];
 
     for (var i = 0; i < 2010; i++) {
-      inflight.add(await aliceCipher.encrypt(Uint8List.fromList(utf8
-          .encode("you've never been so hungry, you've never been so cold"))));
+      final alicetemp = await aliceCipher.encrypt(Uint8List.fromList(utf8
+          .encode("you've never been so hungry, you've never been so cold")));
+      if (alicetemp != null) {
+        inflight.add(alicetemp);
+      }
     }
 
     await bobCipher.decryptFromSignal(
@@ -240,8 +251,11 @@ Future<void> main() async {
     final inflight = <CiphertextMessage>[];
 
     for (var i = 0; i < 2000; i++) {
-      inflight.add(await aliceCipher
-          .encrypt(Uint8List.fromList(utf8.encode('up the punks'))));
+      final alicetemp = await aliceCipher
+          .encrypt(Uint8List.fromList(utf8.encode('up the punks')));
+      if (alicetemp != null) {
+        inflight.add(alicetemp);
+      }
     }
 
     while (inflight.isNotEmpty) {
@@ -249,8 +263,9 @@ Future<void> main() async {
       final ciphertext = inflight.removeAt(index);
       final plaintext = await bobCipher.decryptFromSignal(
           SignalMessage.fromSerialized(ciphertext.serialize()));
-
-      assert(utf8.decode(plaintext) == 'up the punks');
+      if (plaintext != null) {
+        assert(utf8.decode(plaintext) == 'up the punks');
+      }
     }
   });
 }

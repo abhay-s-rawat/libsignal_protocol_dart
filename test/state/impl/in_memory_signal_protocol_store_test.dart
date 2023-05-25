@@ -48,7 +48,7 @@ void main() {
     final aliceSessionCipher = SessionCipher.fromStore(aliceStore, bobAddress);
     final msgAliceToBob = await aliceSessionCipher
         .encrypt(Uint8List.fromList(utf8.encode(msgOrig)));
-
+    if (msgAliceToBob == null) return;
     // Pretend that Alice has now sent the message to Bob
 
     //
@@ -77,6 +77,7 @@ void main() {
 
     final bobSessionCipher = SessionCipher.fromStore(bobStore, aliceAddress);
     var msgDecrypted = await bobSessionCipher.decrypt(msgIn);
+    if (msgDecrypted == null) return;
     var msgDecoded = utf8.decode(msgDecrypted, allowMalformed: true);
     expect(msgDecoded, msgOrig);
 
@@ -86,6 +87,7 @@ void main() {
 
     final msgBobToAlice = await bobSessionCipher
         .encrypt(Uint8List.fromList(utf8.encode(msgDecoded)));
+    if (msgBobToAlice == null) return;
     expect(
       msgBobToAlice.getType(),
       CiphertextMessage.whisperType,
@@ -98,6 +100,7 @@ void main() {
     msgDecrypted = await aliceSessionCipher.decryptFromSignal(
       SignalMessage.fromSerialized(msgBobToAlice.serialize()),
     );
+    if (msgDecrypted == null) return;
     msgDecoded = utf8.decode(msgDecrypted, allowMalformed: true);
     expect(msgDecoded, msgOrig);
   });

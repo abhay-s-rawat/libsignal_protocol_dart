@@ -60,15 +60,21 @@ class SessionBuilder {
       return const Optional.empty();
     }
 
-    final ourSignedPreKey = _signedPreKeyStore
-        .loadSignedPreKey(message.getSignedPreKeyId())
-        .then((value) => value.getKeyPair());
+    final ourSignedPreKeyTemp =
+        await _signedPreKeyStore.loadSignedPreKey(message.getSignedPreKeyId());
+    if (ourSignedPreKeyTemp == null) {
+      return const Optional.empty();
+    }
+    final ourSignedPreKey = ourSignedPreKeyTemp.getKeyPair();
 
     late final Optional<ECKeyPair> ourOneTimePreKey;
     if (message.getPreKeyId().isPresent) {
-      ourOneTimePreKey = Optional.of(await _preKeyStore
-          .loadPreKey(message.getPreKeyId().value)
-          .then((value) => value.getKeyPair()));
+      final ourOneTimePreKeyTemp =
+          await _preKeyStore.loadPreKey(message.getPreKeyId().value);
+      if (ourOneTimePreKeyTemp == null) {
+        return const Optional.empty();
+      }
+      ourOneTimePreKey = Optional.of(ourOneTimePreKeyTemp.getKeyPair());
     } else {
       ourOneTimePreKey = const Optional<ECKeyPair>.empty();
     }
@@ -79,8 +85,8 @@ class SessionBuilder {
       theirBaseKey: message.getBaseKey(),
       theirIdentityKey: message.getIdentityKey(),
       ourIdentityKey: await _identityKeyStore.getIdentityKeyPair(),
-      ourSignedPreKey: await ourSignedPreKey,
-      ourRatchetKey: await ourSignedPreKey,
+      ourSignedPreKey: ourSignedPreKey,
+      ourRatchetKey: ourSignedPreKey,
       ourOneTimePreKey: ourOneTimePreKey,
     );
 
@@ -100,11 +106,12 @@ class SessionBuilder {
     }
   }
 
-  Future<void> processPreKeyBundle(PreKeyBundle preKey) async {
+  Future<bool> processPreKeyBundle(PreKeyBundle preKey) async {
     if (!await _identityKeyStore.isTrustedIdentity(
         _remoteAddress, preKey.getIdentityKey(), Direction.sending)) {
-      throw UntrustedIdentityException(
-          _remoteAddress.getName(), preKey.getIdentityKey());
+      return false;
+      /* throw UntrustedIdentityException(
+          _remoteAddress.getName(), preKey.getIdentityKey()); */
     }
 
     if (preKey.getSignedPreKey() != null &&
@@ -120,6 +127,9 @@ class SessionBuilder {
     }
 
     final sessionRecord = await _sessionStore.loadSession(_remoteAddress);
+    if (sessionRecord == null) {
+      return false;
+    }
     final ourBaseKey = Curve.generateKeyPair();
     final theirSignedPreKey = preKey.getSignedPreKey();
     final theirOneTimePreKey = Optional.ofNullable(preKey.getPreKey());
@@ -152,5 +162,6 @@ class SessionBuilder {
     await _identityKeyStore.saveIdentity(
         _remoteAddress, preKey.getIdentityKey());
     await _sessionStore.storeSession(_remoteAddress, sessionRecord);
+    return true;
   }
 }

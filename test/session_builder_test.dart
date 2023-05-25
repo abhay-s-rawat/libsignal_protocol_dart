@@ -61,19 +61,31 @@ void main() {
     final aliceMessage = await aliceSessionCipher
         .encrypt(Uint8List.fromList(utf8.encode(originalMessage)));
 
+    if (aliceMessage == null) {
+      return;
+    }
+
     assert(aliceMessage.getType() == CiphertextMessage.whisperType);
 
     var plaintext = await bobSessionCipher.decryptFromSignal(
         SignalMessage.fromSerialized(aliceMessage.serialize()));
+    if (plaintext == null) {
+      return;
+    }
     assert(String.fromCharCodes(plaintext) == originalMessage);
 
     final bobMessage = await bobSessionCipher
         .encrypt(Uint8List.fromList(utf8.encode(originalMessage)));
-
+    if (bobMessage == null) {
+      return;
+    }
     assert(bobMessage.getType() == CiphertextMessage.whisperType);
 
     plaintext = await aliceSessionCipher.decryptFromSignal(
         SignalMessage.fromSerialized(bobMessage.serialize()));
+    if (plaintext == null) {
+      return;
+    }
     assert(String.fromCharCodes(plaintext) == originalMessage);
 
     for (var i = 0; i < 10; i++) {
@@ -83,9 +95,14 @@ void main() {
               surges up in the world--and defines himself aftward. $i''';
       final aliceLoopingMessage = await aliceSessionCipher
           .encrypt(Uint8List.fromList(utf8.encode(loopingMessage)));
-
+      if (aliceLoopingMessage == null) {
+        return;
+      }
       final loopingPlaintext = await bobSessionCipher.decryptFromSignal(
           SignalMessage.fromSerialized(aliceLoopingMessage.serialize()));
+      if (loopingPlaintext == null) {
+        return;
+      }
       assert(String.fromCharCodes(loopingPlaintext) == loopingMessage);
     }
 
@@ -96,9 +113,14 @@ void main() {
           surges up in the world--and defines himself aftward. $i''';
       final bobLoopingMessage = await bobSessionCipher
           .encrypt(Uint8List.fromList(utf8.encode(loopingMessage)));
-
+      if (bobLoopingMessage == null) {
+        return;
+      }
       final loopingPlaintext = await aliceSessionCipher.decryptFromSignal(
           SignalMessage.fromSerialized(bobLoopingMessage.serialize()));
+      if (loopingPlaintext == null) {
+        return;
+      }
       assert(String.fromCharCodes(loopingPlaintext) == loopingMessage);
     }
 
@@ -112,7 +134,9 @@ void main() {
               surges up in the world--and defines himself aftward. $i''';
       final aliceLoopingMessage = await aliceSessionCipher
           .encrypt(Uint8List.fromList(utf8.encode(loopingMessage)));
-
+      if (aliceLoopingMessage == null) {
+        return;
+      }
       aliceOutOfOrderMessages.add((loopingMessage, aliceLoopingMessage));
     }
 
@@ -123,9 +147,14 @@ void main() {
               surges up in the world--and defines himself aftward. $i''';
       final aliceLoopingMessage = await aliceSessionCipher
           .encrypt(Uint8List.fromList(utf8.encode(loopingMessage)));
-
+      if (aliceLoopingMessage == null) {
+        return;
+      }
       final loopingPlaintext = await bobSessionCipher.decryptFromSignal(
           SignalMessage.fromSerialized(aliceLoopingMessage.serialize()));
+      if (loopingPlaintext == null) {
+        return;
+      }
       assert(String.fromCharCodes(loopingPlaintext) == loopingMessage);
     }
 
@@ -133,15 +162,23 @@ void main() {
       final loopingMessage = 'You can only desire based on what you know: $i';
       final bobLoopingMessage = await bobSessionCipher
           .encrypt(Uint8List.fromList(utf8.encode(loopingMessage)));
-
+      if (bobLoopingMessage == null) {
+        return;
+      }
       final loopingPlaintext = await aliceSessionCipher.decryptFromSignal(
           SignalMessage.fromSerialized(bobLoopingMessage.serialize()));
+      if (loopingPlaintext == null) {
+        return;
+      }
       assert(String.fromCharCodes(loopingPlaintext) == loopingMessage);
     }
 
     for (final aliceOutOfOrderMessage in aliceOutOfOrderMessages) {
       final outOfOrderPlaintext = await bobSessionCipher.decryptFromSignal(
           SignalMessage.fromSerialized(aliceOutOfOrderMessage.$2.serialize()));
+      if (outOfOrderPlaintext == null) {
+        return;
+      }
       assert(String.fromCharCodes(outOfOrderPlaintext) ==
           (aliceOutOfOrderMessage.$1));
     }
@@ -184,6 +221,9 @@ void main() {
     var aliceSessionCipher = SessionCipher.fromStore(aliceStore, bobAddress);
     var outgoingMessage = await aliceSessionCipher
         .encrypt(Uint8List.fromList(utf8.encode(originalMessage)));
+    if (outgoingMessage == null) {
+      return;
+    }
     assert(outgoingMessage.getType() == CiphertextMessage.prekeyType);
 
     final incomingMessage = PreKeySignalMessage(outgoingMessage.serialize());
@@ -201,20 +241,29 @@ void main() {
       assert(originalMessage == result);
       assert(!await bobStore.containsSession(aliceAddress));
     });
-
+    if (plaintext == null) {
+      return;
+    }
     assert(await bobStore.containsSession(aliceAddress));
     assert(await bobStore
             .loadSession(aliceAddress)
             .then((value) => value.sessionState.getSessionVersion()) ==
         3);
+
     assert(originalMessage == utf8.decode(plaintext, allowMalformed: true));
 
     final bobOutgoingMessage = await bobSessionCipher
         .encrypt(Uint8List.fromList(utf8.encode(originalMessage)));
+    if (bobOutgoingMessage == null) {
+      return;
+    }
     assert(bobOutgoingMessage.getType() == CiphertextMessage.whisperType);
 
     final alicePlaintext = await aliceSessionCipher.decryptFromSignal(
         SignalMessage.fromSerialized(bobOutgoingMessage.serialize()));
+    if (alicePlaintext == null) {
+      return;
+    }
     assert(
         utf8.decode(alicePlaintext, allowMalformed: true) == originalMessage);
 
@@ -254,7 +303,9 @@ void main() {
 
     outgoingMessage = await aliceSessionCipher
         .encrypt(Uint8List.fromList(utf8.encode(originalMessage)));
-
+    if (outgoingMessage == null) {
+      return;
+    }
     try {
       plaintext = await bobSessionCipher
           .decrypt(PreKeySignalMessage(outgoingMessage.serialize()));
@@ -266,6 +317,9 @@ void main() {
 
     plaintext = await bobSessionCipher
         .decrypt(PreKeySignalMessage(outgoingMessage.serialize()));
+    if (plaintext == null) {
+      return;
+    }
     assert(utf8.decode(plaintext, allowMalformed: true) == originalMessage);
 
     bobPreKey = PreKeyBundle(

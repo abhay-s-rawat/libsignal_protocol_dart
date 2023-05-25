@@ -50,8 +50,11 @@ class SessionCipher {
   PreKeyStore _preKeyStore;
   SignalProtocolAddress _remoteAddress;
 
-  Future<CiphertextMessage> encrypt(Uint8List paddedMessage) async {
+  Future<CiphertextMessage?> encrypt(Uint8List paddedMessage) async {
     final sessionRecord = await _sessionStore.loadSession(_remoteAddress);
+    if (sessionRecord == null) {
+      return null;
+    }
     final sessionState = sessionRecord.sessionState;
     final chainKey = sessionState.getSenderChainKey();
     final messageKeys = chainKey.getMessageKeys();
@@ -98,12 +101,15 @@ class SessionCipher {
     return ciphertextMessage;
   }
 
-  Future<Uint8List> decrypt(PreKeySignalMessage ciphertext) async =>
+  Future<Uint8List?> decrypt(PreKeySignalMessage ciphertext) async =>
       decryptWithCallback(ciphertext, () {}());
 
-  Future<Uint8List> decryptWithCallback(
+  Future<Uint8List?> decryptWithCallback(
       PreKeySignalMessage ciphertext, DecryptionCallback? callback) async {
     final sessionRecord = await _sessionStore.loadSession(_remoteAddress);
+    if (sessionRecord == null) {
+      return null;
+    }
     final unsignedPreKeyId =
         await _sessionBuilder.process(sessionRecord, ciphertext);
     final plaintext = _decrypt(sessionRecord, ciphertext.getWhisperMessage());
@@ -121,16 +127,19 @@ class SessionCipher {
     return plaintext;
   }
 
-  Future<Uint8List> decryptFromSignal(SignalMessage cipherText) async =>
+  Future<Uint8List?> decryptFromSignal(SignalMessage cipherText) async =>
       decryptFromSignalWithCallback(cipherText, () {}());
 
-  Future<Uint8List> decryptFromSignalWithCallback(
+  Future<Uint8List?> decryptFromSignalWithCallback(
       SignalMessage cipherText, DecryptionCallback? callback) async {
     if (!await _sessionStore.containsSession(_remoteAddress)) {
       throw NoSessionException('No session for: $_remoteAddress');
     }
 
     final sessionRecord = await _sessionStore.loadSession(_remoteAddress);
+    if (sessionRecord == null) {
+      return null;
+    }
     final plaintext = _decrypt(sessionRecord, cipherText);
 
     if (!await _identityKeyStore.isTrustedIdentity(
@@ -214,17 +223,23 @@ class SessionCipher {
     return plaintext;
   }
 
-  Future<int> getRemoteRegistrationId() async {
+  Future<int?> getRemoteRegistrationId() async {
     final record = await _sessionStore.loadSession(_remoteAddress);
+    if (record == null) {
+      return null;
+    }
     return record.sessionState.remoteRegistrationId;
   }
 
-  Future<int> getSessionVersion() async {
+  Future<int?> getSessionVersion() async {
     if (!await _sessionStore.containsSession(_remoteAddress)) {
       // throw IllegalStateException("No session for ($_remoteAddress)!");
     }
 
     final record = await _sessionStore.loadSession(_remoteAddress);
+    if (record == null) {
+      return null;
+    }
     return record.sessionState.getSessionVersion();
   }
 
