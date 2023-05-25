@@ -1,8 +1,8 @@
 import 'pre_key_record.dart';
 
 abstract mixin class PreKeyStore {
-  Future<PreKeyRecord> loadPreKey(
-      int preKeyId); //  throws InvalidKeyIdException;
+  Future<PreKeyRecord?> loadPreKey(
+      int preKeyId); // Will return null instead of throwing InvalidKeyIdException;
 
   Future<void> storePreKey(int preKeyId, PreKeyRecord record);
 

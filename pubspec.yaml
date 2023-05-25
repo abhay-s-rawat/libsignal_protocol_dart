@@ -1,13 +1,12 @@
 name: libsignal_protocol_dart
 description: Signal Protocol libray for Dart native and Flutter, pure Dart implementation of the the Signal Protocol
-version: 0.7.0
+version: 1.0.0
 repository: https://github.com/MixinNetwork/libsignal_protocol_dart
 topics:
- - crypto
+  - crypto
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
-
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   adaptive_number: ^1.0.0
@@ -22,7 +21,6 @@ dependencies:
   protobuf: ^2.0.0
   very_good_analysis: ^5.0.0+1
   x25519: ^0.1.1
-
 
 dev_dependencies:
   test: ^1.24.3

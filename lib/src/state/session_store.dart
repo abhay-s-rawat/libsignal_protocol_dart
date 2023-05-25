@@ -3,7 +3,7 @@ import '../signal_protocol_address.dart';
 import 'session_record.dart';
 
 abstract mixin class SessionStore {
-  Future<SessionRecord> loadSession(SignalProtocolAddress address);
+  Future<SessionRecord?> loadSession(SignalProtocolAddress address);
 
   Future<List<int>> getSubDeviceSessions(String name);
 
