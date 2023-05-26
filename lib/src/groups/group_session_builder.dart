@@ -15,6 +15,7 @@ class GroupSessionBuilder {
       SenderKeyDistributionMessageWrapper
           senderKeyDistributionMessageWrapper) async {
     final senderKeyRecord = await _senderKeyStore.loadSenderKey(senderKeyName);
+    if (senderKeyRecord == null) return;
     senderKeyRecord.addSenderKeyState(
         senderKeyDistributionMessageWrapper.id,
         senderKeyDistributionMessageWrapper.iteration,
@@ -23,11 +24,12 @@ class GroupSessionBuilder {
     await _senderKeyStore.storeSenderKey(senderKeyName, senderKeyRecord);
   }
 
-  Future<SenderKeyDistributionMessageWrapper> create(
+  Future<SenderKeyDistributionMessageWrapper?> create(
       SenderKeyName senderKeyName) async {
     try {
       final senderKeyRecord =
           await _senderKeyStore.loadSenderKey(senderKeyName);
+      if (senderKeyRecord == null) return null;
       if (senderKeyRecord.isEmpty) {
         senderKeyRecord.setSenderKeyState(generateSenderKeyId(), 0,
             generateSenderKey(), generateSenderSigningKey());

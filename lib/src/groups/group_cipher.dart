@@ -19,9 +19,10 @@ class GroupCipher {
   final SenderKeyStore _senderKeyStore;
   final SenderKeyName _senderKeyId;
 
-  Future<Uint8List> encrypt(Uint8List paddedPlaintext) async {
+  Future<Uint8List?> encrypt(Uint8List paddedPlaintext) async {
     try {
       final record = await _senderKeyStore.loadSenderKey(_senderKeyId);
+      if (record == null) return null;
       final senderKeyState = record.getSenderKeyState();
       final senderKey = senderKeyState.senderChainKey.senderMessageKey;
       final ciphertext =
@@ -37,13 +38,14 @@ class GroupCipher {
     }
   }
 
-  Future<Uint8List> decrypt(Uint8List senderKeyMessageBytes) async =>
+  Future<Uint8List?> decrypt(Uint8List senderKeyMessageBytes) async =>
       decryptWithCallback(senderKeyMessageBytes, () {}());
 
-  Future<Uint8List> decryptWithCallback(
+  Future<Uint8List?> decryptWithCallback(
       Uint8List senderKeyMessageBytes, DecryptionCallback? callback) async {
     try {
       final record = await _senderKeyStore.loadSenderKey(_senderKeyId);
+      if (record == null) return null;
       if (record.isEmpty) {
         throw NoSessionException(
             'No group sender key for: ${_senderKeyId.serialize()}');

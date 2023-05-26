@@ -94,6 +94,10 @@ Future<void> groupTest() async {
 
   final sentAliceDistributionMessage =
       await aliceSessionBuilder.create(groupSender);
+  if (sentAliceDistributionMessage == null) {
+    print('empty kdm');
+    return;
+  }
   final receivedAliceDistributionMessage =
       SenderKeyDistributionMessageWrapper.fromSerialized(
           sentAliceDistributionMessage.serialize());
@@ -102,9 +106,17 @@ Future<void> groupTest() async {
 
   final ciphertextFromAlice = await aliceGroupCipher
       .encrypt(Uint8List.fromList(utf8.encode('Hello Mixin')));
+  if (ciphertextFromAlice == null) {
+    print('encryption failed');
+    return;
+  }
   final plaintextFromAlice = await bobGroupCipher.decrypt(ciphertextFromAlice);
   // ignore: avoid_print
-  print(utf8.decode(plaintextFromAlice));
+  if (plaintextFromAlice != null) {
+    print(utf8.decode(plaintextFromAlice));
+  } else {
+    print('error occured while decoding');
+  }
 }
 
 Future<void> groupSession() async {

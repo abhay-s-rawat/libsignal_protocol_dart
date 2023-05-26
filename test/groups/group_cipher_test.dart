@@ -40,6 +40,10 @@ void main() {
 
     final sentAliceDistributionMessage =
         await aliceSessionBuilder.create(groupSender);
+
+    assert(sentAliceDistributionMessage != null);
+    if (sentAliceDistributionMessage == null) return;
+
     // ignore: unused_local_variable
     final receivedAliceDistributionMessage =
         SenderKeyDistributionMessageWrapper.fromSerialized(
@@ -49,6 +53,10 @@ void main() {
 
     final ciphertextFromAlice = await aliceGroupCipher
         .encrypt(Uint8List.fromList(utf8.encode('smert ze smert')));
+
+    assert(ciphertextFromAlice != null);
+    if (ciphertextFromAlice == null) return;
+
     try {
       // ignore: unused_local_variable
       final plaintextFromAlice =
@@ -71,6 +79,10 @@ void main() {
 
     final sentAliceDistributionMessage =
         await aliceSessionBuilder.create(groupSender);
+
+    assert(sentAliceDistributionMessage != null);
+    if (sentAliceDistributionMessage == null) return;
+
     final receivedAliceDistributionMessage =
         SenderKeyDistributionMessageWrapper.fromSerialized(
             sentAliceDistributionMessage.serialize());
@@ -79,8 +91,15 @@ void main() {
 
     final ciphertextFromAlice = await aliceGroupCipher
         .encrypt(Uint8List.fromList(utf8.encode('smert ze smert')));
+
+    assert(ciphertextFromAlice != null);
+    if (ciphertextFromAlice == null) return;
+
     final plaintextFromAlice =
         await bobGroupCipher.decrypt(ciphertextFromAlice);
+
+    assert(plaintextFromAlice != null);
+    if (plaintextFromAlice == null) return;
 
     assert(utf8.decode(plaintextFromAlice) == 'smert ze smert');
   });
@@ -97,6 +116,10 @@ void main() {
 
     final sentAliceDistributionMessage =
         await aliceSessionBuilder.create(groupSender);
+
+    assert(sentAliceDistributionMessage != null);
+    if (sentAliceDistributionMessage == null) return;
+
     final receivedAliceDistributionMessage =
         SenderKeyDistributionMessageWrapper.fromSerialized(
             sentAliceDistributionMessage.serialize());
@@ -106,6 +129,10 @@ void main() {
     final plaintext = generateRandomBytes(1024 * 1024);
 
     final ciphertextFromAlice = await aliceGroupCipher.encrypt(plaintext);
+
+    assert(ciphertextFromAlice != null);
+    if (ciphertextFromAlice == null) return;
+
     final plaintextFromAlice =
         await bobGroupCipher.decrypt(ciphertextFromAlice);
 
@@ -126,6 +153,10 @@ void main() {
 
     final sentAliceDistributionMessage =
         await aliceSessionBuilder.create(aliceName);
+
+    assert(sentAliceDistributionMessage != null);
+    if (sentAliceDistributionMessage == null) return;
+
     final receivedAliceDistributionMessage =
         SenderKeyDistributionMessageWrapper.fromSerialized(
             sentAliceDistributionMessage.serialize());
@@ -135,13 +166,27 @@ void main() {
 
     final ciphertextFromAlice = await aliceGroupCipher
         .encrypt(Uint8List.fromList(utf8.encode('smert ze smert')));
+
+    assert(ciphertextFromAlice != null);
+    if (ciphertextFromAlice == null) return;
+
     final ciphertextFromAlice2 = await aliceGroupCipher
         .encrypt(Uint8List.fromList(utf8.encode('smert ze smert2')));
+
+    assert(ciphertextFromAlice2 != null);
+    if (ciphertextFromAlice2 == null) return;
+
     final ciphertextFromAlice3 = await aliceGroupCipher
         .encrypt(Uint8List.fromList(utf8.encode('smert ze smert3')));
 
+    assert(ciphertextFromAlice3 != null);
+    if (ciphertextFromAlice3 == null) return;
+
     final plaintextFromAlice =
         await bobGroupCipher.decrypt(ciphertextFromAlice);
+
+    assert(plaintextFromAlice != null);
+    if (plaintextFromAlice == null) return;
 
     try {
       await bobGroupCipher.decrypt(ciphertextFromAlice);
@@ -152,8 +197,15 @@ void main() {
 
     final plaintextFromAlice2 =
         await bobGroupCipher.decrypt(ciphertextFromAlice2);
+
+    assert(plaintextFromAlice2 != null);
+    if (plaintextFromAlice2 == null) return;
+
     final plaintextFromAlice3 =
         await bobGroupCipher.decrypt(ciphertextFromAlice3);
+
+    assert(plaintextFromAlice3 != null);
+    if (plaintextFromAlice3 == null) return;
 
     assert(utf8.decode(plaintextFromAlice) == 'smert ze smert');
     assert(utf8.decode(plaintextFromAlice2) == 'smert ze smert2');
@@ -186,6 +238,10 @@ void main() {
 
     final distributionMessageToBob =
         await aliceSessionBuilder.create(aliceName);
+
+    assert(distributionMessageToBob != null);
+    if (distributionMessageToBob == null) return;
+
     await bobSessionBuilder.process(
         aliceName,
         SenderKeyDistributionMessageWrapper.fromSerialized(
@@ -193,7 +249,14 @@ void main() {
 
     final ciphertext = await aliceGroupCipher
         .encrypt(Uint8List.fromList(utf8.encode('welcome to the group')));
+
+    assert(ciphertext != null);
+    if (ciphertext == null) return;
+
     final plaintext = await bobGroupCipher.decrypt(ciphertext);
+
+    assert(plaintext != null);
+    if (plaintext == null) return;
 
     assert(utf8.decode(plaintext) == 'welcome to the group');
   });
@@ -212,6 +275,10 @@ void main() {
 
     final sentAliceDistributionMessage =
         await aliceSessionBuilder.create(aliceName);
+
+    assert(sentAliceDistributionMessage != null);
+    if (sentAliceDistributionMessage == null) return;
+
     // ignore: unused_local_variable
     final receivedAliceDistributionMessage =
         SenderKeyDistributionMessageWrapper.fromSerialized(
@@ -220,13 +287,19 @@ void main() {
     final aliceDistributionMessage =
         await aliceSessionBuilder.create(aliceName);
 
+    assert(aliceDistributionMessage != null);
+    if (aliceDistributionMessage == null) return;
+
     await bobSessionBuilder.process(aliceName, aliceDistributionMessage);
 
     final ciphertexts = <Uint8List>[];
 
     for (var i = 0; i < 100; i++) {
-      ciphertexts.add(await aliceGroupCipher
-          .encrypt(Uint8List.fromList(utf8.encode('up the punks'))));
+      final temp = await aliceGroupCipher
+          .encrypt(Uint8List.fromList(utf8.encode('up the punks')));
+      if (temp != null) {
+        ciphertexts.add(temp);
+      }
     }
 
     while (ciphertexts.isNotEmpty) {
@@ -234,7 +307,7 @@ void main() {
       final ciphertext = ciphertexts.removeAt(index);
       final plaintext = await bobGroupCipher.decrypt(ciphertext);
 
-      assert(utf8.decode(plaintext) == 'up the punks');
+      assert(utf8.decode(plaintext as Uint8List) == 'up the punks');
     }
   });
 
@@ -268,6 +341,9 @@ void main() {
     final aliceDistributionMessage =
         await aliceSessionBuilder.create(aliceName);
 
+    assert(aliceDistributionMessage != null);
+    if (aliceDistributionMessage == null) return;
+
     await bobSessionBuilder.process(aliceName, aliceDistributionMessage);
 
     for (var i = 0; i < 2001; i++) {
@@ -277,6 +353,10 @@ void main() {
 
     final tooFarCiphertext = await aliceGroupCipher
         .encrypt(Uint8List.fromList(utf8.encode('notta gonna worka')));
+
+    assert(tooFarCiphertext != null);
+    if (tooFarCiphertext == null) return;
+
     try {
       await bobGroupCipher.decrypt(tooFarCiphertext);
       throw AssertionError('Should have failed!');
@@ -300,13 +380,19 @@ void main() {
     final aliceDistributionMessage =
         await aliceSessionBuilder.create(aliceName);
 
+    assert(aliceDistributionMessage != null);
+    if (aliceDistributionMessage == null) return;
+
     await bobSessionBuilder.process(aliceName, aliceDistributionMessage);
 
     final inflight = <Uint8List>[];
 
     for (var i = 0; i < 2010; i++) {
-      inflight.add(await aliceGroupCipher
-          .encrypt(Uint8List.fromList(utf8.encode('up the punks'))));
+      final temp = await aliceGroupCipher
+          .encrypt(Uint8List.fromList(utf8.encode('up the punks')));
+      if (temp != null) {
+        inflight.add(temp);
+      }
     }
 
     await bobGroupCipher.decrypt(inflight[1000]);
