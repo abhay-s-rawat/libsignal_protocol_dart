@@ -5,5 +5,5 @@ abstract class SenderKeyStore {
   Future<void> storeSenderKey(
       SenderKeyName senderKeyName, SenderKeyRecord record);
 
-  Future<SenderKeyRecord?> loadSenderKey(SenderKeyName senderKeyName);
+  Future<SenderKeyRecord> loadSenderKey(SenderKeyName senderKeyName);
 }
